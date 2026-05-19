@@ -1,0 +1,2537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STARLIGHT Protocol</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+    --bg:#0d1117;
+    --panel:#0d1117;
+    --border:#30363d;
+    --text:#d6deea;
+    --muted:#8b949e;
+    --accent:#58a6ff;
+    --accent2:#79c0ff;
+    --success:#3fb950;
+    --danger:#f85149;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:
+    radial-gradient(circle at 20% 50%, rgba(0, 150, 100, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(0, 100, 150, 0.03) 0%, transparent 50%),
+    var(--bg);
+    color:var(--text);
+    font-family:'JetBrains Mono','Cascadia Mono','Fira Code','Consolas',monospace;
+    min-height:100vh;
+    overflow-x:hidden;
+    letter-spacing:0.3px;
+}
+
+body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image:repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.015),
+        rgba(0, 0, 0, 0.015) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events:none;
+    animation: scanlinesDim 12s linear infinite;
+}
+
+@keyframes scanlinesDim {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+
+header{
+    text-align:center;
+    padding:40px 20px 15px;
+}
+
+header h1{
+    font-family:'JetBrains Mono','Cascadia Mono','Fira Code','Consolas',monospace;
+    font-size:3.5rem;
+    letter-spacing:3px;
+    color:#58a6ff;
+    text-shadow: 0 0 5px rgba(88, 166, 255, 0.2);
+    font-weight:700;
+}
+
+header p{
+    color:var(--muted);
+    margin-top:8px;
+    font-size:0.95rem;
+}
+
+.main{
+    display:grid;
+    grid-template-columns:420px 1fr 420px;
+    gap:20px;
+    padding:20px;
+}
+
+.panel{
+    background:rgba(13, 17, 23, 0.8);
+    border:1px solid rgba(88, 166, 255, 0.15);
+    border-radius:6px;
+    padding:20px;
+    backdrop-filter:blur(2px);
+    animation: fadeInUp 0.6s ease backwards;
+    transition: all 0.25s ease;
+}
+
+.panel:hover{
+    border-color:rgba(88, 166, 255, 0.3);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.panel h2{
+    font-family:'JetBrains Mono','Cascadia Mono','Fira Code','Consolas',monospace;
+    color:var(--accent);
+    margin-bottom:15px;
+    font-size:0.9rem;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:8px;
+}
+
+.cell{
+    aspect-ratio:1;
+    border-radius:6px;
+    border:1px solid rgba(88, 166, 255, 0.2);
+    background:rgba(22, 27, 50, 0.6);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:grab;
+    transition:.25s ease;
+}
+
+.cell:hover{
+    transform:translateY(-2px);
+    border-color:rgba(88, 166, 255, 0.5);
+    box-shadow:0 0 12px rgba(88, 166, 255, 0.15);
+}
+
+.cell:active{
+    cursor:grabbing;
+}
+
+.cell.dragging{
+    opacity:0.5;
+    transform:scale(0.95);
+}
+
+.cell.drag-over{
+    border-color:rgba(88, 166, 255, 0.8);
+    box-shadow:0 0 20px rgba(88, 166, 255, 0.4);
+    background:rgba(22, 27, 50, 0.9);
+}
+
+.cell input{
+    width:100%;
+    height:100%;
+    border:none;
+    outline:none;
+    background:transparent;
+    color:#79c0ff;
+    text-align:center;
+    font-weight:700;
+    text-transform:uppercase;
+    font-size:.85rem;
+    font-family:inherit;
+}
+
+.controls{
+    margin-top:20px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+
+button{
+    border:none;
+    padding:12px;
+    border-radius:6px;
+    background:rgba(88, 166, 255, 0.15);
+    border:1px solid rgba(88, 166, 255, 0.3);
+    color:#58a6ff;
+    font-weight:600;
+    cursor:pointer;
+    transition:.25s ease;
+    font-family:inherit;
+}
+
+button:hover{
+    background:rgba(88, 166, 255, 0.25);
+    border-color:rgba(88, 166, 255, 0.5);
+    transform:translateY(-2px);
+}
+
+button.secondary{
+    background:transparent;
+    border:1px solid rgba(88, 166, 255, 0.2);
+    color:#8b949e;
+}
+
+button.secondary:hover{
+    background:rgba(88, 166, 255, 0.1);
+    border-color:rgba(88, 166, 255, 0.4);
+}
+
+textarea{
+    width:100%;
+    min-height:180px;
+    resize:vertical;
+    border:1px solid rgba(88, 166, 255, 0.15);
+    outline:none;
+    border-radius:6px;
+    padding:15px;
+    background:rgba(13, 17, 23, 0.8);
+    color:#d6deea;
+    font-size:0.9rem;
+    font-family:inherit;
+    line-height:1.5;
+    transition:border-color 0.25s ease;
+}
+
+textarea:focus{
+    border-color:rgba(88, 166, 255, 0.4);
+}
+
+.output{
+    margin-top:20px;
+    background:rgba(13, 17, 23, 0.8);
+    border-radius:6px;
+    border:1px solid rgba(88, 166, 255, 0.15);
+    min-height:140px;
+    padding:15px;
+    line-height:1.6;
+    overflow-wrap:anywhere;
+    color:#d6deea;
+    font-size:0.9rem;
+}
+
+.weekdays{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin:20px 0;
+}
+
+.day{
+    background:transparent;
+    border:1px solid rgba(88, 166, 255, 0.2);
+    padding:10px;
+    border-radius:6px;
+    text-align:center;
+    cursor:pointer;
+    transition:.25s ease;
+    font-size:0.85rem;
+    color:#8b949e;
+    font-weight:600;
+}
+
+.day:hover{
+    border-color:rgba(88, 166, 255, 0.4);
+    background:rgba(88, 166, 255, 0.05);
+}
+
+.day.active{
+    background:rgba(88, 166, 255, 0.15);
+    border-color:rgba(88, 166, 255, 0.5);
+    color:#58a6ff;
+}
+
+.infoBox{
+    background:rgba(13, 17, 23, 0.6);
+    border:1px solid rgba(88, 166, 255, 0.15);
+    border-radius:6px;
+    padding:15px;
+    margin-bottom:15px;
+    transition:all 0.25s ease;
+}
+
+.infoBox:hover{
+    border-color:rgba(88, 166, 255, 0.3);
+}
+
+.infoBox h3{
+    color:var(--accent);
+    margin-bottom:8px;
+    font-size:0.85rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+}
+
+.infoBox p{
+    font-size:0.9rem;
+    color:#d6deea;
+}
+
+.status{
+    margin-top:15px;
+    color:var(--success);
+    font-size:.9rem;
+}
+
+.pipeline{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.step{
+    background:rgba(13, 17, 23, 0.8);
+    border:1px solid rgba(88, 166, 255, 0.15);
+    border-radius:6px;
+    padding:15px;
+}
+
+.step code{
+    display:block;
+    margin-top:8px;
+    background:rgba(13, 17, 23, 0.6);
+    border:1px solid rgba(88, 166, 255, 0.2);
+    border-radius:6px;
+    padding:10px 12px;
+    font-family:inherit;
+    color:#79c0ff;
+    white-space:pre;
+    tab-size:4;
+    overflow-x:auto;
+    line-height:1.4;
+    font-size:0.85rem;
+}
+
+.step strong{
+    color:#58a6ff;
+    font-weight:700;
+}
+
+.badge{
+    display:inline-block;
+    background:rgba(88, 166, 255, 0.1);
+    color:#79c0ff;
+    padding:4px 10px;
+    border-radius:4px;
+    font-size:.7rem;
+    margin-bottom:8px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+}
+
+.traceBlock{
+    background:rgba(13, 17, 23, 0.8);
+    border:1px solid rgba(88, 166, 255, 0.15);
+    border-radius:6px;
+    padding:15px;
+    margin-bottom:15px;
+    animation: fadeInUp 0.6s ease backwards;
+}
+
+.traceBlock h4{
+    color:var(--accent);
+    margin-bottom:12px;
+    font-family:inherit;
+    font-size:.85rem;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    font-weight:700;
+}
+
+.traceMatrix{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:6px;
+    margin-top:12px;
+}
+
+.traceCell{
+    background:rgba(22, 27, 50, 0.6);
+    border:1px solid rgba(88, 166, 255, 0.2);
+    border-radius:6px;
+    min-height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:.75rem;
+    font-weight:600;
+    color:#79c0ff;
+}
+
+.traceTable{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:12px;
+    font-variant-numeric:tabular-nums;
+}
+
+.traceTable th{
+    background:rgba(22, 27, 50, 0.6);
+    color:var(--accent);
+    padding:10px;
+    border:1px solid rgba(88, 166, 255, 0.15);
+    font-size:.75rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+}
+
+.traceTable td{
+    border:1px solid rgba(88, 166, 255, 0.1);
+    padding:10px;
+    font-size:.75rem;
+    text-align:center;
+    color:#d6deea;
+}
+
+.traceTable td:nth-child(2),
+.traceTable td.traceHighlight{
+    font-family:inherit;
+    white-space:nowrap;
+}
+
+.traceEquation{
+    margin-top:10px;
+    background:rgba(13, 17, 23, 0.6);
+    border:1px solid rgba(88, 166, 255, 0.15);
+    border-radius:6px;
+    padding:12px;
+    font-family:inherit;
+    color:#79c0ff;
+    overflow-x:auto;
+    font-size:0.85rem;
+    line-height:1.4;
+}
+
+.traceHighlight{
+    color:var(--success);
+    font-weight:700;
+}
+
+.traceArrow{
+    color:var(--accent);
+    font-weight:700;
+}
+
+.traceDivider{
+    height:1px;
+    background:rgba(88, 166, 255, 0.1);
+    margin:15px 0;
+}
+
+.traceVisualizationContainer{
+    max-width:1100px;
+    margin:40px auto 0;
+    padding:0 30px;
+    position:relative;
+    z-index:1;
+    width:100%;
+}
+
+#pipeline{
+    margin-top:20px;
+}
+
+@media(max-width:1400px){
+    .main{
+        grid-template-columns:1fr;
+    }
+    
+    .traceVisualizationContainer{
+        margin-top:40px;
+    }
+}
+
+/* PDF Modal */
+.pdf-modal{
+    display:none;
+    position:fixed;
+    z-index:1000;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background-color:rgba(0,0,0,0.8);
+    animation:fadeIn 0.3s ease;
+}
+
+.pdf-modal.active{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+@keyframes fadeIn{
+    from{opacity:0;}
+    to{opacity:1;}
+}
+
+.pdf-modal-content{
+    background:var(--bg);
+    border:1px solid rgba(88, 166, 255, 0.3);
+    border-radius:8px;
+    width:90%;
+    max-width:1200px;
+    height:85vh;
+    display:flex;
+    flex-direction:column;
+    animation:slideIn 0.3s ease;
+}
+
+@keyframes slideIn{
+    from{transform:scale(0.95);opacity:0;}
+    to{transform:scale(1);opacity:1;}
+}
+
+.pdf-modal-header{
+    padding:20px;
+    border-bottom:1px solid rgba(88, 166, 255, 0.2);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.pdf-modal-header h2{
+    color:var(--accent);
+    font-size:1.2rem;
+    font-weight:700;
+    letter-spacing:1px;
+    margin:0;
+}
+
+.pdf-close-btn{
+    background:transparent;
+    border:none;
+    color:var(--accent);
+    font-size:2rem;
+    cursor:pointer;
+    padding:0;
+    width:40px;
+    height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:color 0.25s ease;
+}
+
+.pdf-close-btn:hover{
+    color:var(--danger);
+}
+
+.pdf-modal-body{
+    flex:1;
+    overflow:auto;
+}
+
+.pdf-modal-iframe{
+    width:100%;
+    height:100%;
+    border:none;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+    <h1>STARLIGHT</h1>
+    <p>Temporal Traversal Encoding Protocol</p>
+</header>
+
+<!-- PDF Modal -->
+<div id="pdfModal" class="pdf-modal">
+    <div class="pdf-modal-content">
+        <div class="pdf-modal-header">
+            <h2>STARLIGHT Protocol Report</h2>
+            <button class="pdf-close-btn" onclick="closePDFModal()">&times;</button>
+        </div>
+        <div class="pdf-modal-body">
+            <iframe class="pdf-modal-iframe" src="STAR_LIGHT.pdf"></iframe>
+        </div>
+    </div>
+</div>
+
+<div class="main">
+
+    <!-- LEFT -->
+    <div class="panel">
+
+        <h2>BASE GRID</h2>
+
+        <div class="grid" id="grid"></div>
+
+        <div class="controls">
+            <button onclick="autoGenerate()">Auto Generate</button>
+            <button onclick="shuffleGrid()">Shuffle</button>
+            <button class="secondary" onclick="resetGrid()">Reset</button>
+            <button class="secondary" onclick="validateGrid()">Validate</button>
+        </div>
+
+        <div class="status" id="status"></div>
+
+    </div>
+
+    <!-- CENTER -->
+    <div class="panel">
+
+        <h2>ENCODE / DECODE</h2>
+
+        <textarea id="inputText" placeholder="Enter plaintext or ciphertext..."></textarea>
+
+        <div class="weekdays" id="weekdays"></div>
+
+        <div class="controls">
+            <button onclick="encodeMessage()">Encode</button>
+            <button onclick="decodeMessage()">Decode</button>
+        </div>
+
+        <div class="output" id="output">
+            Output will appear here...
+        </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="panel">
+
+        <h2>PROTOCOL VISUALIZATION</h2>
+
+        <div class="infoBox">
+            <h3>Current Transformation</h3>
+            <p id="transformInfo">
+                Friday — Clockwise Rotation
+            </p>
+        </div>
+
+        <div class="infoBox">
+            <h3>Shift Pattern</h3>
+            <p>
+                0, +1, -1, +1, -1...
+            </p>
+        </div>
+
+        <button onclick="openPDFModal()" style="width:100%;margin-top:15px;padding:15px;background:rgba(88, 166, 255, 0.2);border:1px solid rgba(88, 166, 255, 0.4);color:#58a6ff;border-radius:6px;cursor:pointer;font-weight:600;transition:all 0.25s ease;font-family:inherit;text-transform:uppercase;letter-spacing:0.5px;font-size:0.85rem;">
+            📄 Read the Paper Here
+        </button>
+
+        <div style="margin-top:30px;padding-top:20px;border-top:1px solid rgba(88, 166, 255, 0.15);font-size:0.8rem;color:#8b949e;line-height:1.6;">
+            <p style="margin-bottom:12px;">
+                STARLIGHT is an experimental symbolic encoding framework intended for educational, creative, ARG, and protocol-design exploration purposes.
+            </p>
+            <p style="margin-bottom:12px;">
+                It is not intended to replace modern cryptographic standards such as AES, RSA, or ChaCha20.
+            </p>
+            <p style="margin-top:15px;text-align:center;">
+                Created by <a href="https://github.com/Mr-hars007" target="_blank" style="color:#58a6ff;text-decoration:none;font-weight:600;transition:color 0.25s ease;" onmouseover="this.style.color='#79c0ff'" onmouseout="this.style.color='#58a6ff'">Mr-hars007</a>
+            </p>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- FULL-WIDTH TRACE VISUALIZATION -->
+<div class="traceVisualizationContainer">
+    <div id="pipeline">
+
+        <div class="traceBlock">
+
+            <h4>
+                LIVE PROTOCOL TRACE
+            </h4>
+
+            <p style="color:var(--muted)">
+                Encode or decode a message
+                to visualize the complete
+                STARLIGHT transformation
+                pipeline.
+            </p>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+// PDF Modal Functions
+function openPDFModal(){
+    document.getElementById('pdfModal').classList.add('active');
+}
+
+function closePDFModal(){
+    document.getElementById('pdfModal').classList.remove('active');
+}
+
+// Close modal when clicking outside
+window.onclick = function(event){
+    const modal = document.getElementById('pdfModal');
+    if(event.target === modal){
+        closePDFModal();
+    }
+}
+
+const defaultGrid = [
+'M','7','A','?','T','SHF','2',
+'X',';','L','0','R','!','ORB',
+'C','9','MIR','E','B',':','Q',
+'5','H','U','.','K','NUL','Y',
+'G',',','P','ECH','3','D','V',
+'W','F','1','J','8','S','MASK',
+'Z','4','SEA','N','O','6','I'
+];
+
+let gridData = [...defaultGrid];
+
+const transformations = {
+    Monday:'Horizontal Mirror',
+    Tuesday:'Vertical Mirror',
+    Wednesday:'Main Diagonal Reflection',
+    Thursday:'Anti-Diagonal Reflection',
+    Friday:'Clockwise Rotation',
+    Saturday:'Counterclockwise Rotation',
+    Sunday:'Center Reflection'
+};
+
+const realDays = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday'
+];
+
+let currentDay =
+realDays[new Date().getDay()];
+
+const weekdaysContainer = document.getElementById('weekdays');
+
+function updateTransformationUI(){
+
+    document.getElementById(
+        'transformInfo'
+    ).innerText =
+    `${currentDay} — ${transformations[currentDay]}`;
+
+}
+
+updateTransformationUI();
+
+Object.keys(transformations).forEach(day=>{
+
+    const div = document.createElement('div');
+
+    div.className='day';
+
+    if(day === currentDay){
+
+        div.classList.add('active');
+
+    }
+
+    div.innerText=day;
+
+    div.onclick = () => {
+
+        currentDay = day;
+
+        document
+        .querySelectorAll('.day')
+        .forEach(d =>
+            d.classList.remove('active')
+        );
+
+        div.classList.add('active');
+
+        updateTransformationUI();
+
+        renderPipeline();
+
+        setStatus(
+            `Protocol switched to ${day} mode.`
+        );
+
+    };
+
+    weekdaysContainer.appendChild(div);
+
+});
+
+const grid = document.getElementById('grid');
+
+function renderPipeline(){
+
+    const pipeline =
+    document.getElementById(
+        'pipeline'
+    );
+
+    const equations = {
+
+        Monday: {
+
+            transform:
+            'M[r][c] → M[r][6-c]',
+
+            operation:
+            'Horizontal Mirror Reflection',
+
+            coordinate:
+            '(r,c) → (r,6-c)',
+
+            traversal:
+            'Left ↔ Right Axis Swap',
+
+            inverse:
+            'M[r][6-c] → M[r][c]'
+        },
+
+        Tuesday: {
+
+            transform:
+            'M[r][c] → M[6-r][c]',
+
+            operation:
+            'Vertical Mirror Reflection',
+
+            coordinate:
+            '(r,c) → (6-r,c)',
+
+            traversal:
+            'Top ↔ Bottom Axis Swap',
+
+            inverse:
+            'M[6-r][c] → M[r][c]'
+        },
+
+        Wednesday: {
+
+            transform:
+            'M[r][c] → M[c][r]',
+
+            operation:
+            'Main Diagonal Reflection',
+
+            coordinate:
+            '(r,c) → (c,r)',
+
+            traversal:
+            'Diagonal Coordinate Folding',
+
+            inverse:
+            'M[c][r] → M[r][c]'
+        },
+
+        Thursday: {
+
+            transform:
+            'M[r][c] → M[6-c][6-r]',
+
+            operation:
+            'Anti-Diagonal Reflection',
+
+            coordinate:
+            '(r,c) → (6-c,6-r)',
+
+            traversal:
+            'Anti-Diagonal Traversal',
+
+            inverse:
+            'M[6-c][6-r] → M[r][c]'
+        },
+
+        Friday: {
+
+            transform:
+            'M[r][c] → M[c][6-r]',
+
+            operation:
+            '90° Clockwise Rotation',
+
+            coordinate:
+            '(r,c) → (c,6-r)',
+
+            traversal:
+            'Clockwise Rotational Mapping',
+
+            inverse:
+            'M[c][6-r] → M[r][c]'
+        },
+
+        Saturday: {
+
+            transform:
+            'M[r][c] → M[6-c][r]',
+
+            operation:
+            '90° Counterclockwise Rotation',
+
+            coordinate:
+            '(r,c) → (6-c,r)',
+
+            traversal:
+            'Counter-Rotational Mapping',
+
+            inverse:
+            'M[6-c][r] → M[r][c]'
+        },
+
+        Sunday: {
+
+            transform:
+            'M[r][c] → M[6-r][6-c]',
+
+            operation:
+            'Central Reflection',
+
+            coordinate:
+            '(r,c) → (6-r,6-c)',
+
+            traversal:
+            'Symmetric Central Inversion',
+
+            inverse:
+            'M[6-r][6-c] → M[r][c]'
+        }
+
+    };
+
+    const eq =
+    equations[currentDay];
+
+    pipeline.innerHTML = `
+
+        <div class="step">
+
+            <div class="badge">
+                MATRIX OPERATION
+            </div>
+
+            <strong>
+                ${eq.operation}
+            </strong>
+
+            <br><br>
+
+            <code>${eq.transform}</code>
+
+        </div>
+
+        <div class="step">
+
+            <div class="badge">
+                COORDINATE REMAP
+            </div>
+
+            <strong>
+                Position Mapping
+            </strong>
+
+            <br><br>
+
+            <code>${eq.coordinate}</code>
+
+        </div>
+
+        <div class="step">
+
+            <div class="badge">
+                TRAVERSAL LOGIC
+            </div>
+
+            <strong>
+                Symbol Traversal
+            </strong>
+
+            <br><br>
+
+            <code>${eq.traversal}</code>
+
+        </div>
+
+        <div class="step">
+
+            <div class="badge">
+                SHIFT FUNCTION
+            </div>
+
+            <strong>
+                Alternating Positional Shift
+            </strong>
+
+            <br><br>
+
+            <code>shift =\nn==0 ? 0 :\n(n%2==0 ? -1 : +1)</code>
+
+        </div>
+
+        <div class="step">
+
+            <div class="badge">
+                REVERSE DECODING
+            </div>
+
+            <strong>
+                Inverse Reconstruction
+            </strong>
+
+            <br><br>
+
+            <code>${eq.inverse}</code>
+
+        </div>
+
+    `;
+}
+
+function renderGrid(){
+
+    grid.innerHTML='';
+
+    gridData.forEach((symbol,index)=>{
+
+        const cell=document.createElement('div');
+
+        cell.className='cell';
+        cell.draggable=true;
+        cell.dataset.index=index;
+
+        const input=document.createElement('input');
+
+        input.value=symbol;
+        input.readonly=true;
+
+        // Drag start - mark as dragging
+        cell.addEventListener('dragstart',(e)=>{
+            cell.classList.add('dragging');
+            e.dataTransfer.effectAllowed='move';
+            e.dataTransfer.setData('text/html',cell.innerHTML);
+        });
+
+        // Drag end - cleanup
+        cell.addEventListener('dragend',(e)=>{
+            cell.classList.remove('dragging');
+            document.querySelectorAll('.cell').forEach(c=>c.classList.remove('drag-over'));
+        });
+
+        // Drag over - show drop zone
+        cell.addEventListener('dragover',(e)=>{
+            e.preventDefault();
+            e.dataTransfer.dropEffect='move';
+            if(!cell.classList.contains('dragging')){
+                cell.classList.add('drag-over');
+            }
+        });
+
+        // Drag leave - remove drop zone
+        cell.addEventListener('dragleave',(e)=>{
+            cell.classList.remove('drag-over');
+        });
+
+        // Drop - swap items
+        cell.addEventListener('drop',(e)=>{
+            e.preventDefault();
+            const draggedCell=document.querySelector('.cell.dragging');
+            if(draggedCell){
+                const draggedIndex=parseInt(draggedCell.dataset.index);
+                const targetIndex=parseInt(cell.dataset.index);
+                
+                if(draggedIndex!==targetIndex){
+                    [gridData[draggedIndex],gridData[targetIndex]]=[gridData[targetIndex],gridData[draggedIndex]];
+                    renderGrid();
+                    setStatus('✓ Grid cell swapped');
+                }
+            }
+            cell.classList.remove('drag-over');
+        });
+
+        cell.appendChild(input);
+
+        grid.appendChild(cell);
+
+    });
+
+}
+
+function autoGenerate(){
+
+    gridData.sort(()=>Math.random()-0.5);
+
+    shuffleGrid();
+    updateTransformationUI();
+    renderPipeline();
+
+    setStatus('Random nonlinear grid generated.');
+
+}
+
+function shuffleGrid(){
+
+    for(let i=gridData.length-1;i>0;i--){
+
+        const j=Math.floor(Math.random()*(i+1));
+
+        [gridData[i],gridData[j]]=
+        [gridData[j],gridData[i]];
+
+    }
+
+    renderGrid();
+
+    setStatus('Grid shuffled.');
+
+}
+
+function resetGrid(){
+
+    gridData=[...defaultGrid];
+
+    renderGrid();
+
+    setStatus('Grid reset.');
+
+}
+
+function validateGrid(){
+
+    const unique=new Set(gridData);
+
+    if(unique.size!==49){
+
+        setStatus('Invalid grid: duplicates detected.',true);
+
+        return;
+
+    }
+
+    setStatus('Grid validated successfully.');
+
+}
+
+function setStatus(msg,error=false){
+
+    const status=document.getElementById('status');
+
+    status.style.color=error ? 'var(--danger)' : 'var(--success)';
+
+    status.innerText=msg;
+
+}
+
+function toMatrix(arr){
+
+    const matrix=[];
+
+    for(let i=0;i<7;i++){
+
+        matrix.push(arr.slice(i*7,i*7+7));
+
+    }
+
+    return matrix;
+
+}
+
+function flatten(matrix){
+
+    return matrix.flat();
+
+}
+
+function transformGrid(){
+
+    let m=toMatrix(gridData);
+
+    switch(currentDay){
+
+        case 'Monday':
+            m=m.map(r=>[...r].reverse());
+            break;
+
+        case 'Tuesday':
+            m=[...m].reverse();
+            break;
+
+        case 'Wednesday':
+            m=m[0].map((_,i)=>m.map(r=>r[i]));
+            break;
+
+        case 'Thursday':
+            m=m[0].map((_,i)=>m.map(r=>r[6-i]).reverse());
+            break;
+
+        case 'Friday':
+            m=m[0].map((_,i)=>m.map(r=>r[i]).reverse());
+            break;
+
+        case 'Saturday':
+            m=m[0].map((_,i)=>m.map(r=>r[6-i]));
+            break;
+
+        case 'Sunday':
+            m=m.reverse().map(r=>r.reverse());
+            break;
+    }
+
+    return flatten(m);
+
+}
+
+function getCoordinates(symbol){
+
+    const idx=gridData.indexOf(symbol);
+
+    if(idx===-1) return null;
+
+    return {
+        row:Math.floor(idx/7),
+        col:idx%7
+    };
+
+}
+
+function getOperationalSymbol(row,col){
+
+    const op=transformGrid();
+
+    return op[row*7+col];
+
+}
+
+function getBaseSymbol(row,col){
+
+    return gridData[row*7+col];
+
+}
+
+function shiftChar(char,shift){
+
+    const fullSet = [
+
+        'A','B','C','D','E','F','G',
+        'H','I','J','K','L','M','N',
+        'O','P','Q','R','S','T','U',
+        'V','W','X','Y','Z',
+
+        '0','1','2','3','4',
+        '5','6','7','8','9',
+
+        '.',',','?','!',':',';',
+
+        'MASK',
+        'SHF',
+        'MIR',
+        'ORB',
+        'NUL',
+        'ECH',
+        'SEA'
+    ];
+
+    const idx =
+    fullSet.indexOf(char);
+
+    if(idx === -1){
+
+        return char;
+    }
+
+    let shifted =
+    (
+        idx +
+        shift +
+        fullSet.length
+    ) %
+    fullSet.length;
+
+    return fullSet[shifted];
+}
+
+function tokenizeSymbols(text){
+
+    const specialSymbols = [
+        'MASK',
+        'SHF',
+        'MIR',
+        'ORB',
+        'NUL',
+        'ECH',
+        'SEA'
+    ];
+
+    // future-safe tokenization
+    specialSymbols.sort(
+        (a,b)=>b.length-a.length
+    );
+
+    let tokens = [];
+
+    let i = 0;
+
+    while(i < text.length){
+
+        let matched = false;
+
+        for(let sym of specialSymbols){
+
+            if(
+                text.substring(
+                    i,
+                    i + sym.length
+                ) === sym
+            ){
+
+                tokens.push(sym);
+
+                i += sym.length;
+
+                matched = true;
+
+                break;
+            }
+        }
+
+        if(!matched){
+
+            tokens.push(text[i]);
+
+            i++;
+        }
+    }
+
+    return tokens;
+}
+
+
+function indexToSymbol(index){
+
+    return gridData[index];
+
+}
+
+function symbolToIndex(symbol){
+
+    const idx =
+    gridData.indexOf(symbol);
+
+    if(idx === -1){
+
+        throw new Error(
+            'Invalid Base49 symbol: ' +
+            symbol
+        );
+    }
+
+    return idx;
+}
+
+function encodeBase49(num){
+
+    let result = [];
+
+    do{
+
+        let remainder =
+        num % 49;
+
+        result.unshift(
+            indexToSymbol(remainder)
+        );
+
+        num =
+        Math.floor(num / 49);
+
+    }while(num > 0);
+
+    // Base49 digit separator
+    return result.join('-');
+}
+
+function decodeBase49(str){
+
+    let tokens =
+    str
+    .split('-')
+    .filter(Boolean);
+
+    let num = 0;
+
+    for(let token of tokens){
+
+        num =
+        num * 49 +
+        symbolToIndex(token);
+    }
+
+    return num;
+}
+
+const metadataSeparators = [
+    '|','~','^','_','/','+','=','*'
+];
+
+function getMetadataDigitSymbols(){
+
+    return gridData.filter(sym=>sym !== ':');
+}
+
+function encodeMetadataIndex(num){
+
+    const digits = getMetadataDigitSymbols();
+    const base = digits.length;
+
+    let result = [];
+
+    do{
+
+        let remainder =
+        num % base;
+
+        result.unshift(
+            digits[remainder]
+        );
+
+        num =
+        Math.floor(num / base);
+
+    }while(num > 0);
+
+    return result.join('');
+}
+
+function decodeMetadataIndex(str){
+
+    const digits = getMetadataDigitSymbols();
+    const base = digits.length;
+    const tokens = tokenizeSymbols(str);
+
+    let num = 0;
+
+    for(let token of tokens){
+
+        const idx =
+        digits.indexOf(token);
+
+        if(idx === -1){
+
+            throw new Error(
+                'Invalid metadata digit: ' +
+                token
+            );
+        }
+
+        num =
+        num * base + idx;
+    }
+
+    return num;
+}
+
+
+function getTraversalPriority(word){
+
+    const first =
+    tokenizeSymbols(word)[0];
+
+    // letters
+    if(/^[A-Z]$/.test(first)){
+
+        return 1000 +
+        (first.charCodeAt(0) - 65);
+    }
+
+    // numbers
+    if(/^[0-9]$/.test(first)){
+
+        return 500 +
+        parseInt(first,10);
+    }
+
+    // symbolic operators
+    const symbolicPriority = {
+
+        MASK:400,
+        SHF:399,
+        MIR:398,
+        ORB:397,
+        NUL:396,
+        ECH:395,
+        SEA:394
+    };
+
+    if(symbolicPriority[first] !== undefined){
+
+        return symbolicPriority[first];
+    }
+
+    // punctuation
+    const punctuationPriority = {
+
+        ';':300,
+        ':':299,
+        '?':298,
+        '!':297,
+        '.':296,
+        ',':295
+    };
+
+    if(punctuationPriority[first] !== undefined){
+
+        return punctuationPriority[first];
+    }
+
+    return 0;
+}
+
+
+function renderMatrix(title,matrix){
+
+    let html = `
+
+        <div class="traceBlock">
+
+            <h4>${title}</h4>
+
+            <div class="traceMatrix">
+
+    `;
+
+    matrix.forEach(cell=>{
+
+        html += `
+            <div class="traceCell">
+                ${cell}
+            </div>
+        `;
+
+    });
+
+    html += `
+            </div>
+        </div>
+    `;
+
+    return html;
+}
+
+function renderVisualizationTrace(
+    input,
+    transformedGrid,
+    coordinateTrace,
+    shiftTrace,
+    wordOrderingTrace,
+    finalOutput
+){
+
+    const pipeline =
+    document.getElementById(
+        'pipeline'
+    );
+
+    let html = '';
+
+    // BASE GRID
+    html += renderMatrix(
+        'BASE GRID',
+        gridData
+    );
+
+    // OPERATIONAL GRID
+    html += renderMatrix(
+        `${currentDay.toUpperCase()} OPERATIONAL GRID`,
+        transformedGrid
+    );
+
+    // INPUT TOKENS (greedy per-word tokenization)
+    const inputWords = input
+        .toUpperCase()
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+
+    const tokenization = inputWords
+        .map(w => tokenizeSymbols(w).join(' '))
+        .join('   |   ');
+
+    html += `
+
+    <div class="traceBlock">
+
+        <h4>INPUT TOKENIZATION</h4>
+
+        <div class="traceEquation">${tokenization}</div>
+
+    </div>
+
+    `;
+
+    // COORDINATE TABLE
+    html += `
+
+    <div class="traceBlock">
+
+        <h4>COORDINATE REMAPPING</h4>
+
+        <table class="traceTable">
+
+            <tr>
+                <th>Symbol</th>
+                <th>Base Coord</th>
+                <th>Transform</th>
+                <th>Operational Coord</th>
+                <th>Operational Symbol</th>
+            </tr>
+
+    `;
+
+    coordinateTrace.forEach(row=>{
+
+        html += `
+
+        <tr>
+
+            <td>${row.symbol}</td>
+
+            <td>
+                (${row.baseRow},
+                ${row.baseCol})
+            </td>
+
+            <td>
+                ${row.transform}
+            </td>
+
+            <td>
+                (${row.newRow},
+                ${row.newCol})
+            </td>
+
+            <td class="traceHighlight">
+                ${row.operational}
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+    html += `
+        </table>
+    </div>
+    `;
+
+    // SHIFT TRACE
+    html += `
+
+    <div class="traceBlock">
+
+        <h4>SHIFT EXECUTION TRACE</h4>
+
+        <table class="traceTable">
+
+            <tr>
+                <th>Index</th>
+                <th>Operational</th>
+                <th>Shift</th>
+                <th>Final</th>
+            </tr>
+
+    `;
+
+    shiftTrace.forEach(row=>{
+
+        html += `
+
+        <tr>
+
+            <td>${row.index}</td>
+
+            <td>${row.before}</td>
+
+            <td>${row.shift}</td>
+
+            <td class="traceHighlight">
+                ${row.after}
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+    html += `
+        </table>
+    </div>
+    `;
+
+    // WORD ORDERING TRACE
+    html += `
+
+    <div class="traceBlock">
+
+        <h4>TRAVERSAL WORD ORDERING</h4>
+
+        <table class="traceTable">
+
+            <tr>
+                <th>Original Index</th>
+                <th>Encoded Word</th>
+                <th>Priority</th>
+                <th>Final Position</th>
+            </tr>
+
+    `;
+
+    wordOrderingTrace.forEach((row,index)=>{
+
+        html += `
+
+        <tr>
+
+            <td>${row.originalIndex}</td>
+
+            <td class="traceHighlight">
+                ${row.word}
+            </td>
+
+            <td>${row.priority}</td>
+
+            <td>${index}</td>
+
+        </tr>
+
+        `;
+
+    });
+
+    html += `
+
+        </table>
+
+    </div>
+
+    `;
+
+    // FINAL OUTPUT
+    html += `
+
+    <div class="traceBlock">
+
+        <h4>FINAL CIPHERTEXT</h4>
+
+        <div class="traceEquation">
+
+            ${finalOutput}
+
+        </div>
+
+    </div>
+
+    `;
+
+    pipeline.innerHTML = html;
+}
+
+function renderDecodeVisualizationTrace(
+    input,
+    transformedGrid,
+    payload,
+    metadata,
+    metadataTrace,
+    restoredTrace,
+    inverseTrace,
+    finalPlaintext
+){
+
+    const pipeline =
+    document.getElementById(
+        'pipeline'
+    );
+
+    const escapeHtml = (str) =>
+        String(str)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#39;');
+
+    let html = '';
+
+    // BASE GRID
+    html += renderMatrix(
+        'BASE GRID',
+        gridData
+    );
+
+    // OPERATIONAL GRID
+    html += renderMatrix(
+        `${currentDay.toUpperCase()} OPERATIONAL GRID`,
+        transformedGrid
+    );
+
+    const payloadWords =
+    payload
+    .split(/\s+/)
+    .filter(Boolean);
+
+    const payloadTokenization =
+    payloadWords
+    .map(w => tokenizeSymbols(w).join(' '))
+    .join('   |   ');
+
+    html += `
+
+    <div class="traceBlock">
+        <h4>CIPHERTEXT INPUT</h4>
+        <div class="traceEquation">${escapeHtml(input)}</div>
+    </div>
+
+    <div class="traceBlock">
+        <h4>PAYLOAD / METADATA</h4>
+        <div class="traceEquation">PAYLOAD: ${escapeHtml(payload)}</div>
+        <div class="traceEquation">METADATA: [${escapeHtml(metadata)}]</div>
+        <div class="traceEquation">TOKENIZATION: ${escapeHtml(payloadTokenization)}</div>
+    </div>
+
+    `;
+
+    // METADATA DECODE
+    html += `
+
+    <div class="traceBlock">
+
+        <h4>METADATA DECODE</h4>
+
+        <table class="traceTable">
+
+            <tr>
+                <th>Received Pos</th>
+                <th>Encoded Word</th>
+                <th>Metadata Token</th>
+                <th>Decoded Index</th>
+            </tr>
+
+    `;
+
+    metadataTrace.forEach(row=>{
+
+        html += `
+
+        <tr>
+            <td>${row.receivedPos}</td>
+            <td class="traceHighlight">${escapeHtml(row.word)}</td>
+            <td>${escapeHtml(row.metadataToken)}</td>
+            <td>${row.decodedIndex}</td>
+        </tr>
+
+        `;
+
+    });
+
+    html += `
+        </table>
+
+    </div>
+
+    `;
+
+    // TRAVERSAL RESTORE
+    html += `
+
+    <div class="traceBlock">
+
+        <h4>TRAVERSAL RESTORATION</h4>
+
+        <table class="traceTable">
+
+            <tr>
+                <th>Restored Pos</th>
+                <th>Original Index</th>
+                <th>Received Pos</th>
+                <th>Encoded Word</th>
+            </tr>
+
+    `;
+
+    restoredTrace.forEach(row=>{
+
+        html += `
+
+        <tr>
+            <td>${row.restoredPos}</td>
+            <td>${row.originalIndex}</td>
+            <td>${row.receivedPos}</td>
+            <td class="traceHighlight">${escapeHtml(row.word)}</td>
+        </tr>
+
+        `;
+
+    });
+
+    html += `
+        </table>
+
+    </div>
+
+    `;
+
+    // INVERSE SHIFT TRACE
+    html += `
+
+    <div class="traceBlock">
+
+        <h4>INVERSE SHIFT + GRID TRANSFER</h4>
+
+        <table class="traceTable">
+
+            <tr>
+                <th>Index</th>
+                <th>Cipher Token</th>
+                <th>Inv Shift</th>
+                <th>Unshifted</th>
+                <th>Operational Coord</th>
+                <th>Plain Token</th>
+            </tr>
+
+    `;
+
+    inverseTrace.forEach(row=>{
+
+        const coord =
+        (row.opRow === null)
+        ? '-'
+        : `(${row.opRow},${row.opCol})`;
+
+        html += `
+
+        <tr>
+            <td>${row.index}</td>
+            <td>${escapeHtml(row.cipher)}</td>
+            <td>${row.inverseShift}</td>
+            <td>${escapeHtml(row.unshifted)}</td>
+            <td>${coord}</td>
+            <td class="traceHighlight">${escapeHtml(row.plain)}</td>
+        </tr>
+
+        `;
+
+    });
+
+    html += `
+        </table>
+
+    </div>
+
+    `;
+
+    // FINAL PLAINTEXT
+    html += `
+
+    <div class="traceBlock">
+
+        <h4>FINAL PLAINTEXT</h4>
+
+        <div class="traceEquation">${escapeHtml(finalPlaintext)}</div>
+
+    </div>
+
+    `;
+
+    pipeline.innerHTML = html;
+}
+
+
+function encodeMessage(){
+
+
+    const text =
+    document.getElementById('inputText')
+    .value
+    .toUpperCase()
+    .trim();
+
+    const words =
+    text
+    .split(/\s+/)
+    .filter(Boolean);
+
+    let encodedWords = [];
+    let coordinateTrace = [];
+    let shiftTrace = [];
+    let wordOrderingTrace = [];
+
+    let globalPos = 0;
+
+    for(let w=0; w<words.length; w++){
+
+        let wordTokens =
+        tokenizeSymbols(words[w]);
+
+        let encoded = '';
+
+        for(let token of wordTokens){
+
+            const coord =
+            getCoordinates(token);
+
+            if(!coord){
+
+                encoded += token;
+                continue;
+            }
+
+            let opSymbol =
+            getOperationalSymbol(
+                coord.row,
+                coord.col
+            );
+
+            let transformedCoord = {
+
+                row:coord.row,
+                col:coord.col
+
+            };
+
+            switch(currentDay){
+            
+                case 'Monday':
+                    transformedCoord.col =
+                    6 - coord.col;
+                    break;
+            
+                case 'Tuesday':
+                    transformedCoord.row =
+                    6 - coord.row;
+                    break;
+            
+                case 'Wednesday':
+                    transformedCoord = {
+                        row:coord.col,
+                        col:coord.row
+                    };
+                    break;
+                
+                case 'Thursday':
+                    transformedCoord = {
+                        row:6 - coord.col,
+                        col:6 - coord.row
+                    };
+                    break;
+                
+                case 'Friday':
+                    transformedCoord = {
+                        row:coord.col,
+                        col:6 - coord.row
+                    };
+                    break;
+                
+                case 'Saturday':
+                    transformedCoord = {
+                        row:6 - coord.col,
+                        col:coord.row
+                    };
+                    break;
+                
+                case 'Sunday':
+                    transformedCoord = {
+                        row:6 - coord.row,
+                        col:6 - coord.col
+                    };
+                    break;
+            }
+
+            let shift;
+
+            if(globalPos === 0){
+
+                shift = 0;
+
+            }else{
+
+                shift =
+                (globalPos % 2 === 0)
+                ? -1
+                : 1;
+            }
+
+            coordinateTrace.push({
+
+                symbol:token,
+
+                baseRow:coord.row,
+                baseCol:coord.col,
+
+                transform:transformations[currentDay],
+
+                newRow:transformedCoord.row,
+                newCol:transformedCoord.col,
+
+                operational:opSymbol
+
+            });
+
+            shiftTrace.push({
+            
+                index:globalPos,
+            
+                before:opSymbol,
+            
+                shift:shift,
+            
+                after:shiftChar(
+                    opSymbol,
+                    shift
+                )
+            
+            });
+
+            encoded +=
+            shiftChar(
+                opSymbol,
+                shift
+            );
+
+            globalPos++;
+        }
+
+        encodedWords.push({
+
+            originalIndex:w,
+            value:encoded
+
+        });
+    }
+
+    // deterministic stable ordering
+    encodedWords.sort((a,b)=>{
+        const priorityDiff =
+        getTraversalPriority(b.value)
+        -
+        getTraversalPriority(a.value);
+
+        if(priorityDiff !== 0){
+
+            return priorityDiff;
+        }
+
+        // stable fallback
+        return (
+            b.value.localeCompare(a.value)
+            ||
+            a.originalIndex -
+            b.originalIndex
+        );
+    });
+
+    encodedWords.forEach((obj,index)=>{
+
+        wordOrderingTrace.push({
+
+            originalIndex:
+            obj.originalIndex,
+
+            word:
+            obj.value,
+
+            priority:
+            getTraversalPriority(
+                obj.value
+            ),
+
+            finalIndex:index
+
+        });
+
+    });
+
+    // metadata entries separated by :
+    const metadataSeparator = ':';
+
+    if(!gridData.includes(metadataSeparator)){
+
+        alert(
+            'Metadata separator ":" must exist in the base grid.'
+        );
+
+        return;
+    }
+
+    let metadata =
+    encodedWords
+    .map(obj=>
+        encodeMetadataIndex(
+            obj.originalIndex
+        )
+    )
+    .join(metadataSeparator);
+
+    let ciphertext =
+    encodedWords
+    .map(obj=>obj.value)
+    .join(' ');
+
+    let finalOutput =
+    ciphertext +
+    ' [' +
+    metadata +
+    ']';
+
+    renderVisualizationTrace(
+    
+        text,
+    
+        transformGrid(),
+    
+        coordinateTrace,
+    
+        shiftTrace,
+    
+        wordOrderingTrace,
+    
+        finalOutput
+    
+    );
+
+    document.getElementById('output')
+    .innerText =
+    finalOutput;
+}
+
+function decodeMessage(){
+
+    try{
+
+        const text =
+        document.getElementById('inputText')
+        .value
+        .toUpperCase()
+        .trim();
+
+        // locate metadata safely
+        const lastOpen =
+        text.lastIndexOf('[');
+
+        const lastClose =
+        text.lastIndexOf(']');
+
+        if(
+            lastOpen === -1 ||
+            lastClose === -1 ||
+            lastClose < lastOpen
+        ){
+
+            alert(
+                'Invalid STARLIGHT ciphertext.'
+            );
+
+            return;
+        }
+
+        // isolate payload
+        const ciphertext =
+        text
+        .substring(0,lastOpen)
+        .trim();
+
+        // isolate metadata
+        const metadata =
+        text
+        .substring(
+            lastOpen + 1,
+            lastClose
+        )
+        .trim();
+
+        // payload words
+        let encodedWords =
+        ciphertext
+        .split(/\s+/)
+        .filter(Boolean);
+
+        let metadataSeparator = ':';
+        let metadataBody = metadata;
+        let metadataChunks = [];
+        let decodeIndex = decodeMetadataIndex;
+
+        if(metadata.startsWith('V4:')){
+
+            metadataBody =
+            metadata.substring(3);
+
+            metadataChunks =
+            metadataBody.length
+            ? metadataBody
+            .split(metadataSeparator)
+            .filter(Boolean)
+            : [];
+
+        }else if(metadata.startsWith('V3:::')){
+
+            metadataSeparator = ':::';
+            metadataBody =
+            metadata.substring(5);
+
+            metadataChunks =
+            metadataBody.length
+            ? metadataBody
+            .split(metadataSeparator)
+            .filter(Boolean)
+            : [];
+
+        }else if(
+            metadata.startsWith('V2') &&
+            metadata.length >= 3 &&
+            metadataSeparators.includes(metadata[2])
+        ){
+
+            metadataSeparator = metadata[2];
+            metadataBody =
+            metadata.substring(3);
+
+            metadataChunks =
+            metadataBody.length
+            ? metadataBody
+            .split(metadataSeparator)
+            .filter(Boolean)
+            : [];
+
+        }else{
+
+            metadataChunks =
+            metadataBody.length
+            ? metadataBody
+            .split(metadataSeparator)
+            .filter(Boolean)
+            : [];
+
+            if(metadataChunks.some(
+                chunk=>chunk.includes('-')
+            )){
+                decodeIndex = decodeBase49;
+            }
+        }
+
+        if(
+            encodedWords.length !==
+            metadataChunks.length
+        ){
+
+            alert(
+                'Metadata mismatch.'
+            );
+
+            return;
+        }
+
+        // trace: metadata decoding (received order)
+        let metadataTrace = [];
+
+        // words with decoded traversal indices
+        let words = [];
+
+        for(
+            let i=0;
+            i<encodedWords.length;
+            i++
+        ){
+
+            const decodedIndex =
+            decodeIndex(
+                metadataChunks[i]
+            );
+
+            metadataTrace.push({
+                receivedPos:i,
+                word:encodedWords[i],
+                metadataToken:metadataChunks[i],
+                decodedIndex:decodedIndex
+            });
+
+            words.push({
+                index:decodedIndex,
+                value:encodedWords[i],
+                receivedPos:i
+            });
+        }
+
+        // restore traversal order
+        words.sort(
+            (a,b)=>
+            a.index - b.index
+        );
+
+        let restoredTrace =
+        words.map((obj,restoredPos)=>(
+            {
+                restoredPos,
+                originalIndex:obj.index,
+                receivedPos:obj.receivedPos,
+                word:obj.value
+            }
+        ));
+
+        // decode symbols
+        let decodedWords = [];
+        let inverseTrace = [];
+
+        let globalPos = 0;
+
+        const operational =
+        transformGrid();
+
+        for(let obj of words){
+
+            let tokens =
+            tokenizeSymbols(
+                obj.value
+            );
+
+            let decodedWord = '';
+
+            for(let token of tokens){
+
+                let reverseShift;
+
+                if(globalPos === 0){
+
+                    reverseShift = 0;
+
+                }else{
+
+                    reverseShift =
+                    (globalPos % 2 === 0)
+                    ? 1
+                    : -1;
+                }
+
+                let unshifted =
+                shiftChar(
+                    token,
+                    reverseShift
+                );
+
+                let idx =
+                operational.indexOf(
+                    unshifted
+                );
+
+                if(idx === -1){
+
+                    inverseTrace.push({
+                        index:globalPos,
+                        cipher:token,
+                        inverseShift:reverseShift,
+                        unshifted:unshifted,
+                        opRow:null,
+                        opCol:null,
+                        plain:unshifted
+                    });
+
+                    decodedWord += unshifted;
+                    globalPos++;
+                    continue;
+                }
+
+                let row =
+                Math.floor(idx / 7);
+
+                let col =
+                idx % 7;
+
+                let original =
+                getBaseSymbol(
+                    row,
+                    col
+                );
+
+                inverseTrace.push({
+                    index:globalPos,
+                    cipher:token,
+                    inverseShift:reverseShift,
+                    unshifted:unshifted,
+                    opRow:row,
+                    opCol:col,
+                    plain:original
+                });
+
+                decodedWord += original;
+                globalPos++;
+            }
+
+            decodedWords.push(
+                decodedWord
+            );
+        }
+
+        const plaintext =
+        decodedWords.join(' ');
+
+        // render decode visualization
+        renderDecodeVisualizationTrace(
+            text,
+            operational,
+            ciphertext,
+            metadata,
+            metadataTrace,
+            restoredTrace,
+            inverseTrace,
+            plaintext
+        );
+
+        document.getElementById('output')
+        .innerText = plaintext;
+
+    }catch(err){
+
+        console.error(err);
+
+        alert(
+            'Decoding failed: ' +
+            err.message
+        );
+    }
+}
+
+shuffleGrid();
+updateTransformationUI();
+renderPipeline();
+
+</script>
+
+</body>
+</html>
