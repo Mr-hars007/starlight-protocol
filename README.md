@@ -1,33 +1,35 @@
-# ✨ STARLIGHT Protocol
+# STARLIGHT Protocol
 
-> **A Temporal Traversal-Based Encoding Framework for Educational & Creative Exploration**
-
----
-
-## 🎯 Overview
-
-**STARLIGHT** is an experimental symbolic encoding protocol that produces cognitively resistant text through an elegant combination of:
-
-- **🔀 Temporal State Mutation** — Weekday-dependent geometric transformations
-- **📍 Coordinate-Transfer Mapping** — Position-based symbol reordering
-- **⚡ Positional Cyclic Shifts** — Alternating shift patterns for encoding variability
-- **🔄 Traversal-Based Reordering** — Lexicographic priority system for word arrangement
-
-Unlike traditional substitution ciphers, STARLIGHT prioritizes **psychological parsing disruption** and **pen-and-paper usability** over computational security.
+> **A temporal, traversal-based encoding framework**
 
 ---
 
-## ⚠️ Disclaimer
+## Homepage Screenshot
 
-**STARLIGHT is an experimental symbolic encoding framework intended for educational, creative, ARG, and protocol-design exploration purposes.**
-
-**It is NOT intended to replace modern cryptographic standards such as AES, RSA, or ChaCha20.**
-
-For production security needs, use battle-tested cryptographic systems. STARLIGHT is for learning, ARGs, puzzles, and creative projects.
+![Homepage screenshot](screenshots/homepage.png)
 
 ---
 
-## 🚀 Quick Start
+## Overview
+
+STARLIGHT is a symbolic encoding protocol designed to alter typical parsing through a combination of:
+
+- **Temporal state mutation** — weekday-dependent geometric transformations
+- **Coordinate-transfer mapping** — position-based symbol reordering
+- **Positional cyclic shifts** — alternating shift patterns for encoding variability
+- **Traversal-based reordering** — lexicographic priority system for word arrangement
+
+Unlike traditional substitution ciphers, STARLIGHT emphasizes pen-and-paper usability and traversal-based ordering rather than computational security.
+
+---
+
+## Disclaimer
+
+STARLIGHT is a symbolic encoding protocol. It is not a replacement for established cryptographic systems such as AES, RSA, or ChaCha20. For production security, use vetted cryptographic libraries and protocols.
+
+---
+
+## Quick Start
 
 ### Open the Interactive Tool
 
@@ -57,7 +59,7 @@ For production security needs, use battle-tested cryptographic systems. STARLIGH
 
 ---
 
-## 🎮 Interactive Features
+## Interactive Features
 
 ### Base Grid Editor
 - **Drag & Drop:** Easily rearrange grid cells by dragging
@@ -81,18 +83,18 @@ Each day applies a unique geometric transformation to the 7×7 grid:
 
 ### Protocol Visualization
 
-Below the input panel, watch the **live protocol trace** showing:
-- 📊 **Base Grid** — Starting symbol matrix
-- 🔄 **Operational Grid** — Transformed matrix for today's day
-- 🔤 **Input Tokenization** — How words are split into symbols
-- 📍 **Coordinate Remapping** — Base coordinates → Operational coordinates
-- ⚡ **Shift Execution** — Positional shift application
-- 🔀 **Traversal Word Ordering** — Words sorted by priority
-- 🎯 **Final Ciphertext** — Encoded output + metadata
+Below the input panel, the live protocol trace shows:
+- **Base grid** — starting symbol matrix
+- **Operational grid** — transformed matrix for the selected day
+- **Input tokenization** — how words are split into symbols
+- **Coordinate remapping** — base coordinates → operational coordinates
+- **Shift execution** — positional shift application
+- **Traversal word ordering** — words sorted by priority
+- **Final ciphertext** — encoded output and metadata
 
 ---
 
-## 📋 Symbol Architecture
+## Symbol Architecture
 
 The STARLIGHT grid contains **49 unique symbols**:
 
@@ -103,7 +105,7 @@ The STARLIGHT grid contains **49 unique symbols**:
 
 ---
 
-## 🔐 Encoding Pipeline
+## Encoding Pipeline
 
 ### Step 1: Tokenization
 Input words are split into greedy longest-match tokens:
@@ -152,7 +154,7 @@ CIPHERTEXT [METADATA]
 
 ---
 
-## 🎯 Decoding Pipeline
+## Decoding Pipeline
 
 Reverse the encoding steps:
 
@@ -165,7 +167,7 @@ Reverse the encoding steps:
 
 ---
 
-## 💻 Technical Stack
+## Technical Stack
 
 - **HTML5** — Structure & semantic markup
 - **CSS3** — Portfolio-themed styling with animations
@@ -180,7 +182,7 @@ Reverse the encoding steps:
 
 ---
 
-## 🎨 Design Highlights
+## Design Highlights
 
 ### Dark Theme
 - **Background:** `#0d1117` (GitHub Dark)
@@ -202,7 +204,7 @@ Reverse the encoding steps:
 
 ---
 
-## 📚 Files Structure
+## File Structure
 
 ```
 starlight-protocol/
@@ -214,7 +216,7 @@ starlight-protocol/
 
 ---
 
-## 🔗 Links
+## Links
 
 - **GitHub:** [@Mr-hars007](https://github.com/Mr-hars007)
 - **Protocol Paper:** View PDF in app ("Read the Paper Here" button)
@@ -222,7 +224,7 @@ starlight-protocol/
 
 ---
 
-## 🎓 Use Cases
+## Use Cases
 
 ### Educational
 - Learn about encoding/decoding algorithms
@@ -244,7 +246,7 @@ starlight-protocol/
 
 ---
 
-## 🛠️ Advanced Features
+## Advanced Features
 
 ### Custom Grid Configurations
 Modify `defaultGrid` in JavaScript to use custom symbol sets.
@@ -257,7 +259,7 @@ Base-48 encoding allows for large word counts. Supports multi-grid chaining for 
 
 ---
 
-## 📝 Example
+## Example
 
 **Plaintext:** `HELLO WORLD`
 
@@ -274,7 +276,7 @@ Base-48 encoding allows for large word counts. Supports multi-grid chaining for 
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 1. **Clone the repo:**
    ```bash
@@ -295,7 +297,7 @@ Base-48 encoding allows for large word counts. Supports multi-grid chaining for 
 
 ---
 
-## 📖 Documentation
+## Documentation
 
 Full protocol specification available in `STAR_LIGHT.pdf`:
 - Complete mathematical formulation
@@ -308,43 +310,42 @@ Click **"Read the Paper Here"** in the app to view.
 
 ---
 
-## ⭐ Features at a Glance
+## Features at a Glance
 
-✅ Interactive 7×7 grid editor  
-✅ Drag-and-drop cell rearrangement  
-✅ 7 unique weekday transformations  
-✅ Real-time protocol visualization  
-✅ Complete encoding/decoding traces  
-✅ Positional shift demonstrations  
-✅ Traversal priority system  
-✅ Metadata Base-48 encoding  
-✅ Beautiful dark theme  
-✅ Responsive design  
-✅ PDF documentation viewer  
-✅ No dependencies required  
+- Interactive 7×7 grid editor
+- Drag-and-drop cell rearrangement
+- Seven weekday transformations
+- Real-time protocol visualization
+- Complete encoding/decoding traces
+- Positional shift demonstrations
+- Traversal priority system
+- Metadata Base-48 encoding
+- Dark theme
+- Responsive design
+- PDF documentation viewer
+- No external dependencies required
 
 ---
 
-## 📄 License
+## License
 
 This project is shared for educational, creative, and experimental purposes.
 
 ---
 
-## 👨‍💻 Author
+## Author
 
-**[Mr-hars007](https://github.com/Mr-hars007)** — Protocol Design & Interactive Implementation
-
----
-
-## 🎯 Protocol Philosophy
-
-> *"STARLIGHT breaks the assumption that all communication must follow natural language parsing. By introducing temporal mutation and position-dependent transformations, we create text that resists both algorithmic and human pattern recognition—not through secret keys, but through deliberate perceptual disruption."*
+[Mr-hars007](https://github.com/Mr-hars007) — protocol design and implementation
 
 ---
 
-**Disclaimer:** STARLIGHT is an experimental framework for exploration. For production security, use standard cryptographic systems (AES, RSA, ChaCha20). 🔐
+## Protocol Philosophy
 
+"STARLIGHT explores how temporal and positional transformations can alter standard parsing. It is not intended for secure communication."
+
+---
+
+**Disclaimer:** For production security, use standard cryptographic systems (AES, RSA, ChaCha20).
 ---
 
 *Last Updated: May 2026*  

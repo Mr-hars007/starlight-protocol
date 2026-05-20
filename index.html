@@ -148,6 +148,11 @@ header p{
     transform:scale(0.95);
 }
 
+.cell.invalid{
+    border-color: rgba(248,81,73,0.9);
+    box-shadow: 0 0 12px rgba(248,81,73,0.18);
+}
+
 .cell.drag-over{
     border-color:rgba(88, 166, 255, 0.8);
     box-shadow:0 0 20px rgba(88, 166, 255, 0.4);
@@ -591,10 +596,8 @@ textarea:focus{
         <div class="grid" id="grid"></div>
 
         <div class="controls">
-            <button onclick="autoGenerate()">Auto Generate</button>
             <button onclick="shuffleGrid()">Shuffle</button>
             <button class="secondary" onclick="resetGrid()">Reset</button>
-            <button class="secondary" onclick="validateGrid()">Validate</button>
         </div>
 
         <div class="status" id="status"></div>
@@ -712,6 +715,7 @@ const defaultGrid = [
 ];
 
 let gridData = [...defaultGrid];
+let invalidSymbols = new Set();
 
 const transformations = {
     Monday:'Horizontal Mirror',
@@ -1033,6 +1037,11 @@ function renderGrid(){
         input.value=symbol;
         input.readonly=true;
 
+        // Mark invalid cells if needed
+        if(invalidSymbols.has(symbol)){
+            cell.classList.add('invalid');
+        }
+
         // Drag start - mark as dragging
         cell.addEventListener('dragstart',(e)=>{
             cell.classList.add('dragging');
@@ -1070,8 +1079,7 @@ function renderGrid(){
                 
                 if(draggedIndex!==targetIndex){
                     [gridData[draggedIndex],gridData[targetIndex]]=[gridData[targetIndex],gridData[draggedIndex]];
-                    renderGrid();
-                    setStatus('✓ Grid cell swapped');
+                    validateGrid();
                 }
             }
             cell.classList.remove('drag-over');
@@ -1082,18 +1090,6 @@ function renderGrid(){
         grid.appendChild(cell);
 
     });
-
-}
-
-function autoGenerate(){
-
-    gridData.sort(()=>Math.random()-0.5);
-
-    shuffleGrid();
-    updateTransformationUI();
-    renderPipeline();
-
-    setStatus('Random nonlinear grid generated.');
 
 }
 
@@ -1108,34 +1104,63 @@ function shuffleGrid(){
 
     }
 
-    renderGrid();
-
-    setStatus('Grid shuffled.');
+    // After shuffling, validate to ensure and highlight any issues
+    validateGrid();
 
 }
 
 function resetGrid(){
 
     gridData=[...defaultGrid];
-
-    renderGrid();
-
-    setStatus('Grid reset.');
+    validateGrid();
 
 }
 
 function validateGrid(){
 
-    const unique=new Set(gridData);
+    const expected = [
+        'A','B','C','D','E','F','G',
+        'H','I','J','K','L','M','N',
+        'O','P','Q','R','S','T','U',
+        'V','W','X','Y','Z',
+        '0','1','2','3','4','5','6','7','8','9',
+        '.',',','?','!',':',';',
+        'MASK','SHF','MIR','ORB','NUL','ECH','SEA'
+    ];
 
-    if(unique.size!==49){
+    // Count occurrences
+    const counts = {};
+    gridData.forEach(sym=>counts[sym] = (counts[sym] || 0) + 1);
 
-        setStatus('Invalid grid: duplicates detected.',true);
+    const duplicates = Object.keys(counts).filter(k=>counts[k] > 1);
 
-        return;
+    const missing = expected.filter(sym => !gridData.includes(sym));
+    const extras = gridData.filter(sym => !expected.includes(sym));
 
+    invalidSymbols.clear();
+
+    if(duplicates.length > 0){
+        duplicates.forEach(d => invalidSymbols.add(d));
     }
 
+    // Mark any unexpected symbols as invalid
+    if(extras.length > 0){
+        extras.forEach(e => invalidSymbols.add(e));
+    }
+
+    if(duplicates.length > 0 || missing.length > 0 || extras.length > 0){
+        let parts = [];
+
+        if(duplicates.length > 0) parts.push('duplicates: ' + duplicates.map(d=>d + ' (x' + counts[d] + ')').join(', '));
+        if(missing.length > 0) parts.push('missing: ' + missing.join(', '));
+        if(extras.length > 0) parts.push('unexpected: ' + [...new Set(extras)].join(', '));
+
+        renderGrid();
+        setStatus('Invalid grid: ' + parts.join(' — '), true);
+        return;
+    }
+
+    renderGrid();
     setStatus('Grid validated successfully.');
 
 }
