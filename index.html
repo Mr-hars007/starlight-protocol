@@ -6,7 +6,8 @@
 <meta property="og:title" content="STARLIGHT Protocol">
 <meta property="og:description" content="Temporal traversal-based symbolic encoding framework">
 <meta property="og:type" content="website">
-<title>STARLIGHT Protocol</title>
+<title>STARLIGHT</title>
+<link rel="icon" type="image/png" href="screenshots/falcon.png">
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
@@ -477,6 +478,166 @@ textarea:focus{
     
     .traceVisualizationContainer{
         margin-top:40px;
+    }
+}
+
+@media(max-width:900px){
+    header{
+        padding:28px 16px 12px;
+    }
+
+    header h1{
+        font-size:2.6rem;
+        letter-spacing:2px;
+    }
+
+    header p{
+        font-size:0.85rem;
+    }
+
+    .main{
+        padding:14px;
+        gap:14px;
+    }
+
+    .panel{
+        padding:16px;
+    }
+
+    .grid,
+    .traceMatrix{
+        gap:6px;
+    }
+
+    .controls{
+        grid-template-columns:1fr;
+    }
+
+    .weekdays{
+        grid-template-columns:repeat(2,1fr);
+        gap:8px;
+        margin:16px 0;
+    }
+
+    .traceVisualizationContainer{
+        padding:0 16px;
+        margin-top:28px;
+    }
+
+    .traceTable{
+        display:block;
+        overflow-x:auto;
+        white-space:nowrap;
+    }
+
+    .pdf-modal-content{
+        width:94%;
+        height:88vh;
+    }
+}
+
+@media(max-width:600px){
+    body{
+        letter-spacing:0.2px;
+    }
+
+    header{
+        padding:24px 12px 10px;
+    }
+
+    header h1{
+        font-size:2.1rem;
+        letter-spacing:1.5px;
+    }
+
+    header p{
+        font-size:0.8rem;
+        line-height:1.4;
+    }
+
+    .main{
+        padding:12px;
+        gap:12px;
+    }
+
+    .panel{
+        padding:14px;
+        border-radius:8px;
+    }
+
+    .panel h2{
+        font-size:0.8rem;
+        margin-bottom:12px;
+    }
+
+    .grid,
+    .traceMatrix{
+        gap:4px;
+    }
+
+    .cell,
+    .traceCell{
+        min-height:0;
+        border-radius:5px;
+    }
+
+    .cell input{
+        font-size:0.75rem;
+    }
+
+    .controls{
+        gap:8px;
+        margin-top:16px;
+    }
+
+    button{
+        padding:11px;
+        font-size:0.9rem;
+    }
+
+    textarea,
+    .output{
+        font-size:0.85rem;
+    }
+
+    .weekdays{
+        grid-template-columns:repeat(2,1fr);
+        gap:6px;
+        margin:14px 0;
+    }
+
+    .day{
+        padding:9px 8px;
+        font-size:0.78rem;
+    }
+
+    .infoBox,
+    .traceBlock{
+        padding:12px;
+    }
+
+    .traceVisualizationContainer{
+        padding:0 12px;
+        margin-top:24px;
+    }
+
+    .traceTable th,
+    .traceTable td{
+        padding:8px;
+        font-size:0.7rem;
+    }
+
+    .pdf-modal-content{
+        width:96%;
+        height:90vh;
+    }
+
+    .pdf-modal-header{
+        padding:14px;
+    }
+
+    .pdf-modal-header h2{
+        font-size:1rem;
     }
 }
 
